@@ -1,4 +1,4 @@
-const { src, dest, watch, parallel } = require('gulp')
+const { src, dest, watch, parallel, series } = require('gulp')
 
 const scss = require('gulp-sass')
 const concat = require('gulp-concat')
@@ -6,6 +6,7 @@ const browserSync = require('browser-sync').create()
 const uglify = require('gulp-uglify-es').default
 const autoprefixer = require('gulp-autoprefixer')
 const imagemin = require('gulp-imagemin')
+const del = require('del')
 
 const browsersync = () => {
     browserSync.init({
@@ -54,6 +55,10 @@ const styles = () => {
         .pipe(browserSync.stream())
 }
 
+const cleanDist = () => {
+    return del('dist')
+}
+
 const build = () => {
     return src([
         'app/css/style.min.css',
@@ -70,11 +75,12 @@ const watching = () => {
     watch(['app/*.html']).on('change', browserSync.reload)
 }
 
-exports.styles = styles
-exports.watching = watching
 exports.browsersync = browsersync
-exports.scripts = scripts
-exports.build = build
 exports.images = images
+exports.scripts = scripts
+exports.styles = styles
+exports.cleanDist = cleanDist
+exports.watching = watching
 
+exports.build = series(styles, scripts, cleanDist, images, build)
 exports.default = parallel(browsersync, watching)
