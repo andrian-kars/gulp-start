@@ -4,6 +4,7 @@ const scss = require('gulp-sass')
 const concat = require('gulp-concat')
 const browserSync = require('browser-sync').create()
 const uglify = require('gulp-uglify-es').default
+const autoprefixer = require('gulp-autoprefixer')
 
 const browsersync = () => {
     browserSync.init({
@@ -28,6 +29,9 @@ const styles = () => {
     return src('app/scss/style.scss')
         .pipe(scss({ outputStyle: 'compressed' })) // 'expanded' for well looking css (remove min)
         .pipe(concat('style.min.css'))
+        .pipe(autoprefixer({
+            overrideBrowserslist: ['last 10 version']
+        }))
         .pipe(dest('app/css'))
         .pipe(browserSync.stream())
 }
