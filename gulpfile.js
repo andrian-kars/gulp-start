@@ -30,10 +30,21 @@ const styles = () => {
         .pipe(scss({ outputStyle: 'compressed' })) // 'expanded' for well looking css (remove min)
         .pipe(concat('style.min.css'))
         .pipe(autoprefixer({
-            overrideBrowserslist: ['last 10 version']
+            overrideBrowserslist: ['last 10 version'],
+            grid: true
         }))
         .pipe(dest('app/css'))
         .pipe(browserSync.stream())
+}
+
+const build = () => {
+    return src([
+        'app/css/style.min.css',
+        'app/fonts/**/*',
+        'app/js/main.min.js',
+        'app/*.html',
+    ], { base: 'app' })
+        .pipe(dest('dist'))
 }
 
 const watching = () => {
@@ -46,5 +57,6 @@ exports.styles = styles
 exports.watching = watching
 exports.browsersync = browsersync
 exports.scripts = scripts
+exports.build = build
 
 exports.default = parallel(browsersync, watching)
